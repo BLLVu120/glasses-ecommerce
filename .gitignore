@@ -41,3 +41,5 @@ coverage/
 Thumbs.db
 .DS_Store
 *.env
+/OpticalStoreBE/OpticalStore.BLL/obj
+/OpticalStoreBE/OpticalStore.API/obj
