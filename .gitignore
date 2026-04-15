@@ -1,0 +1,43 @@
+# Ignore Visual Studio and IDE files
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+OpticalStoreBE/**/bin/
+OpticalStoreBE/**/obj/
+
+# Publish output
+publish/
+*/publish/
+
+# Runtime files and artifacts
+*.dll
+*.exe
+*.pdb
+*.runtimeconfig.json
+*.deps.json
+*.staticwebassets.endpoints.json
+
+# Local project/user settings and secrets
+**/appsettings.Development.json
+**/secrets.json
+OpticalStore.API/OpticalStore.API.csproj.user
+
+# Logs, databases, test results
+*.log
+*.sqlite
+*.db
+TestResults/
+coverage/
+
+# Misc
+Thumbs.db
+.DS_Store
+*.env
