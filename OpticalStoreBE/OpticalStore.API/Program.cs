@@ -67,7 +67,8 @@ builder.Services.AddSwaggerGen(options =>
         {
             "auth" => new[] { "1. Authentication" },
             "products" => new[] { "2. Products" },
-            "users" => new[] { "3. Users" },
+            "product-variants" => new[] { "3. Product Variants" },
+            "users" => new[] { "4. Users" },
             _ => new[] { apiDesc.ActionDescriptor.RouteValues["controller"] ?? "Other" }
         };
     });

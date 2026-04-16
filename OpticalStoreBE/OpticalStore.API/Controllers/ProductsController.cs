@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpticalStore.API.Requests.Products;
@@ -44,19 +43,14 @@ namespace OpticalStore.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductResponse>> GetById(string id)
+        public async Task<ActionResult<ProductResponse>> GetById([FromRoute] GetProductByIdRequest request)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Product id is required.");
+                return BadRequest(ModelState);
             }
 
-            if (!Guid.TryParse(id, out _))
-            {
-                return BadRequest("Product id is not a valid GUID.");
-            }
-
-            var p = await _productService.GetByIdAsync(id);
+            var p = await _productService.GetByIdAsync(request.Id);
             if (p == null) return NotFound();
             var resp = new ProductResponse
             {
@@ -72,11 +66,11 @@ namespace OpticalStore.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductResponse>> Create([FromBody] CreateProductRequest? req)
+        public async Task<ActionResult<ProductResponse>> Create([FromBody] CreateProductRequest req)
         {
-            if (req == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Request body is required.");
+                return BadRequest(ModelState);
             }
 
             var dto = new CreateProductDto

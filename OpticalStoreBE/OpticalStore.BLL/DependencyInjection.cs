@@ -14,6 +14,7 @@ namespace OpticalStore.BLL
             services.AddDalServices(configuration);
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductVariantService, ProductVariantService>();
 
             return services;
         }

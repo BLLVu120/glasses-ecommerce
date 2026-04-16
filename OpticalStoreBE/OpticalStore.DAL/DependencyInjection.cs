@@ -16,6 +16,7 @@ namespace OpticalStore.DAL
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
 
             return services;
         }
