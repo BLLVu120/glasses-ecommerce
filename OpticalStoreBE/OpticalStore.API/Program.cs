@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpticalStore.BLL;
@@ -48,14 +49,25 @@ builder.Services.AddSwaggerGen(options =>
     // Group endpoints by first route segment so Swagger UI shows collapsible tag sections.
     options.TagActionsBy(apiDesc =>
     {
+        var explicitTags = apiDesc.ActionDescriptor.EndpointMetadata
+            .OfType<ITagsMetadata>()
+            .SelectMany(x => x.Tags)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToArray();
+
+        if (explicitTags.Length > 0)
+        {
+            return explicitTags;
+        }
+
         var relativePath = apiDesc.RelativePath ?? string.Empty;
         var firstSegment = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.ToLowerInvariant();
 
         return firstSegment switch
         {
             "auth" => new[] { "1. Authentication" },
-            "users" => new[] { "2. Users" },
-            "products" => new[] { "3. Products" },
+            "products" => new[] { "2. Products" },
+            "users" => new[] { "3. Users" },
             _ => new[] { apiDesc.ActionDescriptor.RouteValues["controller"] ?? "Other" }
         };
     });

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpticalStore.API.Requests.Products;
 using OpticalStore.API.Responses.Products;
@@ -11,7 +12,7 @@ namespace OpticalStore.API.Controllers
 {
     [ApiController]
     [Route("products")]
-    [ApiExplorerSettings(GroupName = "2.Products")]
+    [Tags("2. Products")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;

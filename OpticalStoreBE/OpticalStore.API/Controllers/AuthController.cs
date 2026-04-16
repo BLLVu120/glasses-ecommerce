@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpticalStore.API.Requests.Auth;
 using OpticalStore.API.Responses.Auth;
@@ -11,7 +12,7 @@ namespace OpticalStore.API.Controllers
 {
     [ApiController]
     [Route("auth")]
-    [ApiExplorerSettings(GroupName = "v1")]
+    [Tags("1. Authentication")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
