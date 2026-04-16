@@ -27,6 +27,11 @@ namespace OpticalStore.BLL.Services
 
         public async Task RegisterAsync(RegisterRequestDto request)
         {
+            if (request.Dob.HasValue && request.Dob.Value.Date > DateTime.UtcNow.Date)
+            {
+                throw new ArgumentException("Dob cannot be in the future.");
+            }
+
             var existingUser = await _userRepository.GetByEmailAsync(request.Email);
             if (existingUser != null)
             {
@@ -42,14 +47,13 @@ namespace OpticalStore.BLL.Services
             var user = new User
             {
                 Id = Guid.NewGuid().ToString("D").ToLowerInvariant(),
-                Dob = request.Dob,
+                Dob = request.Dob?.Date,
                 Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Username = request.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Phone = request.Phone,
-                ImageUrl = request.ImageUrl,
                 Status = StatusValues.Active
             };
 

@@ -13,6 +13,7 @@ namespace OpticalStore.BLL
             services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
             services.AddDalServices(configuration);
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IProductService, ProductService>();
 
             return services;
         }

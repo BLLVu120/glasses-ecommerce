@@ -11,6 +11,5 @@ namespace OpticalStore.BLL.DTOs
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string? Phone { get; set; }
-        public string? ImageUrl { get; set; }
     }
 }

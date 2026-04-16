@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpticalStore.API.Requests.Auth;
@@ -16,35 +15,63 @@ namespace OpticalStore.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly IMapper _mapper;
 
-        public AuthController(IAuthService authService, IMapper mapper)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _mapper = mapper;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest? request)
         {
-            var dto = _mapper.Map<RegisterRequestDto>(request);
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+
+            var dto = new RegisterRequestDto
+            {
+                Dob = request.Dob,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Username = request.Username,
+                Password = request.Password,
+                Phone = request.Phone
+            };
+
             await _authService.RegisterAsync(dto);
             return Ok();
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest? request)
         {
-            var dto = _mapper.Map<LoginRequestDto>(request);
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+
+            var dto = new LoginRequestDto
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+
             var result = await _authService.LoginAsync(dto);
-            return Ok(_mapper.Map<AuthResponse>(result));
+            return Ok(ToAuthResponse(result));
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<AuthResponse>> RefreshToken([FromBody] RefreshTokenRequest request)
+        public async Task<ActionResult<AuthResponse>> RefreshToken([FromBody] RefreshTokenRequest? request)
         {
+            if (request == null)
+            {
+                return BadRequest("Request body is required.");
+            }
+
             var result = await _authService.RefreshTokenAsync(request.RefreshToken);
-            return Ok(_mapper.Map<AuthResponse>(result));
+            return Ok(ToAuthResponse(result));
         }
 
         [Authorize]
@@ -77,7 +104,7 @@ namespace OpticalStore.API.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<UserResponse>(currentUser));
+            return Ok(ToUserResponse(currentUser));
         }
 
         private string? GetCurrentUserId()
@@ -87,6 +114,33 @@ namespace OpticalStore.API.Controllers
                 ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             return string.IsNullOrWhiteSpace(sub) ? null : sub;
+        }
+
+        private static AuthResponse ToAuthResponse(AuthResultDto dto)
+        {
+            return new AuthResponse
+            {
+                AccessToken = dto.AccessToken,
+                RefreshToken = dto.RefreshToken,
+                ExpiresIn = dto.ExpiresIn,
+                User = dto.User == null ? null : ToUserResponse(dto.User)
+            };
+        }
+
+        private static UserResponse ToUserResponse(UserDto dto)
+        {
+            return new UserResponse
+            {
+                Id = dto.Id,
+                Dob = dto.Dob,
+                Email = dto.Email,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Username = dto.Username,
+                Phone = dto.Phone,
+                ImageUrl = dto.ImageUrl,
+                Status = dto.Status
+            };
         }
 
     }
