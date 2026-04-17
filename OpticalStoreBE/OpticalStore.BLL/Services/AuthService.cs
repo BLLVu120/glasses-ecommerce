@@ -25,7 +25,7 @@ namespace OpticalStore.BLL.Services
             _jwtSettings = jwtOptions.Value;
         }
 
-        public async Task RegisterAsync(RegisterRequestDto request)
+        public async Task<AuthResultDto> RegisterAsync(RegisterRequestDto request)
         {
             if (request.Dob.HasValue && request.Dob.Value.Date > DateTime.UtcNow.Date)
             {
@@ -59,6 +59,16 @@ namespace OpticalStore.BLL.Services
 
             await _userRepository.AddAsync(user);
             await _userRepository.SaveChangesAsync();
+
+            var accessToken = GenerateAccessToken(user);
+            var refreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays);
+            _userRepository.Update(user);
+            await _userRepository.SaveChangesAsync();
+
+            return BuildAuthResult(user, accessToken, refreshToken);
         }
 
         public async Task<AuthResultDto> LoginAsync(LoginRequestDto request)

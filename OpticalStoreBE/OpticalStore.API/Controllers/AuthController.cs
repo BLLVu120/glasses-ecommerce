@@ -23,7 +23,7 @@ namespace OpticalStore.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest? request)
+        public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest? request)
         {
             if (request == null)
             {
@@ -41,8 +41,8 @@ namespace OpticalStore.API.Controllers
                 Phone = request.Phone
             };
 
-            await _authService.RegisterAsync(dto);
-            return Ok();
+            var result = await _authService.RegisterAsync(dto);
+            return Ok(ToAuthResponse(result));
         }
 
         [HttpPost("login")]

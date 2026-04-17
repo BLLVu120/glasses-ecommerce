@@ -5,7 +5,7 @@ namespace OpticalStore.BLL.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task RegisterAsync(RegisterRequestDto request);
+        Task<AuthResultDto> RegisterAsync(RegisterRequestDto request);
         Task<AuthResultDto> LoginAsync(LoginRequestDto request);
         Task<AuthResultDto> RefreshTokenAsync(string refreshToken);
         Task RevokeRefreshTokenAsync(string userId);
